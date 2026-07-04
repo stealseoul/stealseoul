@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "title": "StealSeoul | 아마존 속 한국 제품 굿딜 모음",
+    "description": "StealSeoul은 아마존에서 살 만한 한국 식품, K-뷰티, 유아동 용품, BT21/IPX 굿즈를 모아서 소개합니다."
+  },
+  "nav": {
+    "blog": "가이드",
+    "about": "소개",
+    "browse": "둘러보기"
+  },
+  "hero": {
+    "eyebrow": "StealSeoul",
+    "title": "아마존 속 한국 제품 굿딜, 한곳에서 확인하세요",
+    "subtitle": "아마존에서 살 만한 한국 식품, K-뷰티, 유아동 용품, BT21/IPX 굿즈를 저희가 대신 찾아드립니다.",
+    "ctaPrimary": "가이드 보기",
+    "ctaSecondary": "카테고리 둘러보기"
+  },
+  "home": {
+    "categoriesHeading": "카테고리",
+    "dealsHeading": "주목할 만한 아이템",
+    "viewAll": "전체 보기",
+    "articlesHeading": "최신 가이드",
+    "viewAllBlog": "가이드 전체 보기"
+  },
+  "product": {
+    "viewOnAmazon": "아마존에서 확인하기",
+    "viewDetails": "자세히 보기",
+    "affiliateNote": "Amazon Associates 링크입니다. 구매 시 StealSeoul이 소정의 수수료를 받을 수 있으며, 구매자에게 추가 비용은 발생하지 않습니다.",
+    "highlightsHeading": "이런 점이 눈에 띕니다",
+    "detailsHeading": "상세 정보",
+    "relatedHeading": "함께 보면 좋은 아이템"
+  },
+  "category": {
+    "dealsHeading": "주목할 만한 아이템",
+    "articlesHeading": "관련 가이드"
+  },
+  "blog": {
+    "heading": "가이드",
+    "subheading": "아마존 속 한국 제품을 카테고리별로 묶어 소개하는 구매 가이드입니다.",
+    "itemsHeading": "이 가이드에서 소개한 아이템",
+    "readTime": "{minutes}분 읽기"
+  },
+  "breadcrumbs": {
+    "home": "홈"
+  },
+  "languageSwitcher": {
+    "label": "언어"
+  },
+  "footer": {
+    "disclosure": "StealSeoul은 Amazon Services LLC Associates Program의 참가자로, 이는 사이트 운영자가 Amazon.com 링크를 통해 광고 수수료를 받을 수 있도록 설계된 제휴 마케팅 프로그램입니다. StealSeoul은 Amazon Associate로서 적격 구매에 대해 수수료를 받을 수 있으며, 구매자에게 추가 비용은 발생하지 않습니다.",
+    "links": {
+      "about": "소개",
+      "disclosure": "제휴 마케팅 고지",
+      "privacy": "개인정보처리방침",
+      "blog": "가이드"
+    },
+    "copyright": "StealSeoul. All rights reserved."
+  },
+  "about": {
+    "title": "StealSeoul 소개",
+    "paragraphs": [
+      "StealSeoul은 미국에 거주하는 쇼핑객들이 아마존에서 살 만한 한국 제품 — 한국 식품, K-뷰티, 유아동 필수템, BT21/IPX 캐릭터 굿즈 — 을 찾을 수 있도록 돕는 사이트입니다. 저희는 한국 마트도, 뷰티 브랜드도 아닙니다. 이미 아마존에서 판매 중인 좋은 옵션을 짚어드리는 딜 파인더 사이트입니다.",
+      "매번 나오는 신제품을 쫓기보다는, 널리 알려져 있고 카테고리 안에서 꾸준히 수요가 있는 제품 위주로 소개합니다. 각 제품 페이지에서는 어떤 제품인지, 누구에게 잘 맞을지, 구매 전 고려할 점은 무엇인지 설명합니다. 가이드 아티클에서는 용도나 상황별로 제품을 묶어서 한 단계 더 나아간 정보를 제공합니다.",
+      "StealSeoul은 Amazon Associates 프로그램에 참여하고 있으며, 사이트 내 링크를 통해 구매가 이루어지면 소정의 수수료를 받을 수 있습니다. 구매자에게 추가 비용은 발생하지 않으며, 이는 사이트 운영에 도움이 됩니다. 자세한 내용은 제휴 마케팅 고지 페이지에서 확인하실 수 있습니다.",
+      "추천하고 싶은 제품이나 궁금한 점이 있다면 언제든 문의해 주세요. StealSeoul은 꾸준히 콘텐츠를 업데이트하고 있습니다."
+    ]
+  },
+  "disclosurePage": {
+    "title": "제휴 마케팅 고지",
+    "paragraphs": [
+      "StealSeoul은 Amazon Services LLC Associates Program의 참가자로, 이는 사이트 운영자가 Amazon.com 및 제휴 사이트에 대한 광고와 링크를 통해 광고 수수료를 받을 수 있도록 설계된 제휴 마케팅 프로그램입니다.",
+      "본 사이트에 게시된 제품 링크 중 일부는 Amazon 제휴 링크입니다. 방문자가 해당 링크를를 통해 적격 구매를 할 경우 StealSeoul은 소정의 수수료를 받을 수 있으며, 이 과정에서 구매자에게 추가 비용은 발생하지 않습니다.",
+      "저희는 실제로 유용하거나 가치 있다고 판단되는 제품을 기준으로 선별하며, 제휴 수수료 여부가 어떤 제품을 소개할지에 영향을 주지 않습니다. 투명성을 위해 제휴 링크 사용 사실을 이곳에 명확히 고지합니다.",
+      "As an Amazon Associate, StealSeoul earns from qualifying purchases made through affiliate links on this site, at no additional cost to the buyer."
+    ]
+  },
+  "privacyPage": {
+    "title": "개인정보처리방침",
+    "intro": "StealSeoul은 방문자의 개인정보를 소중히 여깁니다. 이 페이지는 저희가 어떤 정보를 어떻게 다루는지 설명합니다.",
+    "sections": [
+      {
+        "heading": "수집하는 정보",
+        "body": "StealSeoul은 별도의 회원가입을 요구하지 않으며, 방문자가 직접 입력하는 개인정보를 수집하지 않습니다. 다만 사이트 이용 현황을 파악하기 위해 페이지 조회수, 기기 유형과 같은 비식별 분석 정보가 자동으로 수집될 수 있습니다."
+      },
+      {
+        "heading": "외부 링크 및 제휴 프로그램",
+        "body": "StealSeoul은 Amazon Associates 프로그램에 참여하고 있습니다. 사이트 내 링크를 통해 Amazon.com으로 이동할 수 있으며, 이동 이후의 정보 처리는 Amazon의 개인정보처리방침을 따릅니다."
+      },
+      {
+        "heading": "쿠키",
+        "body": "기본적인 이용 통계 분석과 사용자 경험 개선을 위해 쿠키가 사용될 수 있습니다. 브라우저 설정을 통해 언제든 쿠키를 비활성화하거나 삭제할 수 있습니다."
+      },
+      {
+        "heading": "문의",
+        "body": "본 개인정보처리방침에 대해 궁금한 점이 있으시면 사이트에 안내된 연락처로 문의해 주세요."
+      }
+    ]
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "title": "StealSeoul | 发现亚马逊上值得入手的韩国商品",
+    "description": "StealSeoul 为你整理亚马逊上值得购买的韩国食品、K-Beauty 美妆、母婴用品以及 BT21/IPX 周边商品。"
+  },
+  "nav": {
+    "blog": "购物指南",
+    "about": "关于我们",
+    "browse": "浏览"
+  },
+  "hero": {
+    "eyebrow": "StealSeoul",
+    "title": "亚马逊上的韩国好物优选，一站查看",
+    "subtitle": "我们帮你找出亚马逊上值得购买的韩国食品、K-Beauty 美妆、母婴用品以及 BT21/IPX 周边商品，省去你自己搜索的时间。",
+    "ctaPrimary": "查看购物指南",
+    "ctaSecondary": "浏览分类"
+  },
+  "home": {
+    "categoriesHeading": "分类",
+    "dealsHeading": "值得关注",
+    "viewAll": "查看全部",
+    "articlesHeading": "最新指南",
+    "viewAllBlog": "全部指南"
+  },
+  "product": {
+    "viewOnAmazon": "在亚马逊查看",
+    "viewDetails": "查看详情",
+    "affiliateNote": "这是一个亚马逊联盟链接。通过该链接完成符合条件的购买后，StealSeoul 可能会获得一定佣金，不会给你带来额外费用。",
+    "highlightsHeading": "值得关注的原因",
+    "detailsHeading": "详情",
+    "relatedHeading": "你可能也会喜欢"
+  },
+  "category": {
+    "dealsHeading": "值得关注",
+    "articlesHeading": "相关指南"
+  },
+  "blog": {
+    "heading": "购物指南",
+    "subheading": "关于亚马逊韩国商品的分类汇总与购物指南。",
+    "itemsHeading": "本文提到的商品",
+    "readTime": "阅读需 {minutes} 分钟"
+  },
+  "breadcrumbs": {
+    "home": "首页"
+  },
+  "languageSwitcher": {
+    "label": "语言"
+  },
+  "footer": {
+    "disclosure": "StealSeoul 是 Amazon Services LLC Associates Program 的参与者，这是一项联盟广告计划，旨在让网站通过链接到 Amazon.com 赚取广告费。作为亚马逊联盟会员，StealSeoul 可能从符合条件的购买中获得收入，不会给你带来额外费用。",
+    "links": {
+      "about": "关于我们",
+      "disclosure": "联盟营销声明",
+      "privacy": "隐私政策",
+      "blog": "购物指南"
+    },
+    "copyright": "StealSeoul. 保留所有权利。"
+  },
+  "about": {
+    "title": "关于 StealSeoul",
+    "paragraphs": [
+      "StealSeoul 帮助居住在美国的消费者发现亚马逊上值得购买的韩国商品——韩国食品、K-Beauty 美妆、母婴必需品,以及 BT21/IPX 角色周边。我们不是韩国超市,也不是美妆品牌;我们是一个帮你在亚马逊已上架商品中发掘好物的选品网站。",
+      "比起追逐每一款新品,我们更关注在各自品类中广受欢迎、经久不衰的商品。每个商品页面都会说明这是什么、适合什么样的人,以及购买前需要考虑的因素。我们的购物指南则更进一步,按用途或场景对商品进行分类整理。",
+      "StealSeoul 参与了亚马逊联盟计划,当你通过本站链接购买商品时,我们可能会获得一定佣金,不会给你带来额外费用。这有助于维持网站的运营。详情请查看我们的联盟营销声明页面。",
+      "如果你有商品推荐或任何疑问,欢迎随时联系我们。StealSeoul 会持续更新和扩充内容。"
+    ]
+  },
+  "disclosurePage": {
+    "title": "联盟营销声明",
+    "paragraphs": [
+      "StealSeoul 是 Amazon Services LLC Associates Program 的参与者,这是一项联盟广告计划,旨在让网站通过宣传和链接到 Amazon.com 及其关联网站赚取广告费。",
+      "本站部分商品链接为亚马逊联盟链接。如果你点击链接并完成符合条件的购买,StealSeoul 可能会获得一定佣金,这不会给你带来额外费用。",
+      "我们根据商品是否真正实用或具有良好性价比来进行筛选,联盟佣金不会影响我们选择推荐哪些商品。为了保持透明,我们在此明确说明本站使用了联盟链接。",
+      "作为亚马逊联盟会员,StealSeoul 通过本站联盟链接产生的符合条件的购买获得收入,不会给购买者带来额外费用。"
+    ]
+  },
+  "privacyPage": {
+    "title": "隐私政策",
+    "intro": "StealSeoul 尊重你的隐私。本页面说明我们处理哪些信息以及如何处理。",
+    "sections": [
+      {
+        "heading": "我们收集的信息",
+        "body": "StealSeoul 不要求注册账户,也不会收集你直接提交的个人信息。为了解网站使用情况,系统可能会自动收集页面浏览量、设备类型等非识别性分析数据。"
+      },
+      {
+        "heading": "外部链接与联盟计划",
+        "body": "StealSeoul 参与了亚马逊联盟计划。本站链接可能会将你引导至 Amazon.com。你离开本站后发生的数据处理将遵循亚马逊自身的隐私政策。"
+      },
+      {
+        "heading": "Cookie",
+        "body": "本站可能会使用 Cookie 进行基础使用情况分析并改善网站体验。你可以随时通过浏览器设置禁用或清除 Cookie。"
+      },
+      {
+        "heading": "联系我们",
+        "body": "如果你对本隐私政策有任何疑问,请通过网站上列出的联系方式与我们联系。"
+      }
+    ]
+  }
+}

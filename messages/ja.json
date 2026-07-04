@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "title": "StealSeoul | Amazonでお得な韓国商品を見つけよう",
+    "description": "StealSeoulは、Amazonで買う価値のある韓国食品、K-Beauty、ベビー・キッズ用品、BT21/IPXグッズをまとめて紹介します。"
+  },
+  "nav": {
+    "blog": "ガイド",
+    "about": "サイトについて",
+    "browse": "見てみる"
+  },
+  "hero": {
+    "eyebrow": "StealSeoul",
+    "title": "Amazonのお得な韓国商品を、まとめてチェック",
+    "subtitle": "Amazonで買う価値のある韓国食品、K-Beauty、ベビー・キッズ用品、BT21/IPXグッズを私たちが探してご紹介します。",
+    "ctaPrimary": "ガイドを見る",
+    "ctaSecondary": "カテゴリーを見る"
+  },
+  "home": {
+    "categoriesHeading": "カテゴリー",
+    "dealsHeading": "注目アイテム",
+    "viewAll": "すべて見る",
+    "articlesHeading": "最新ガイド",
+    "viewAllBlog": "ガイド一覧"
+  },
+  "product": {
+    "viewOnAmazon": "Amazonでチェックする",
+    "viewDetails": "詳細を見る",
+    "affiliateNote": "こちらはAmazonアソシエイトリンクです。対象となる購入があった場合、StealSeoulに紹介料が入ることがありますが、購入者に追加費用は発生しません。",
+    "highlightsHeading": "注目ポイント",
+    "detailsHeading": "詳細",
+    "relatedHeading": "こちらもおすすめ"
+  },
+  "category": {
+    "dealsHeading": "注目アイテム",
+    "articlesHeading": "関連ガイド"
+  },
+  "blog": {
+    "heading": "ガイド",
+    "subheading": "Amazonで買える韓国商品のカテゴリー別まとめ・購入ガイドです。",
+    "itemsHeading": "この記事で紹介したアイテム",
+    "readTime": "読了時間 {minutes}分"
+  },
+  "breadcrumbs": {
+    "home": "ホーム"
+  },
+  "languageSwitcher": {
+    "label": "言語"
+  },
+  "footer": {
+    "disclosure": "StealSeoulはAmazon Services LLC Associates Programの参加者です。これはAmazon.comへのリンクを通じて広告料を得られるように設計されたアフィリエイトプログラムです。Amazonアソシエイトとして、StealSeoulは対象となる購入から収益を得ることがありますが、購入者に追加費用は発生しません。",
+    "links": {
+      "about": "サイトについて",
+      "disclosure": "アフィリエイト開示",
+      "privacy": "プライバシーポリシー",
+      "blog": "ガイド"
+    },
+    "copyright": "StealSeoul. All rights reserved."
+  },
+  "about": {
+    "title": "StealSeoulについて",
+    "paragraphs": [
+      "StealSeoulは、アメリカにお住まいの方がAmazonで買う価値のある韓国商品——韓国食品、K-Beauty、ベビー・キッズ用品、BT21/IPXキャラクターグッズ——を見つけるお手伝いをするサイトです。私たちは韓国食品店でも化粧品ブランドでもなく、すでにAmazonで販売されている良い選択肢を紹介するお得情報サイトです。",
+      "次々と出る新商品を追いかけるのではなく、それぞれのカテゴリーで広く知られ、長く支持されている商品を中心に紹介しています。各商品ページでは、それがどんな商品か、どんな人に向いているか、購入前に確認すべき点を説明しています。ガイド記事では、用途やシーン別に商品をまとめ、さらに一歩踏み込んだ情報を提供します。",
+      "StealSeoulはAmazonアソシエイトプログラムに参加しており、サイト内のリンクを通じて購入があった場合、紹介料を得ることがあります。購入者に追加費用が発生することはなく、これはサイト運営の助けになっています。詳しくはアフィリエイト開示ページをご覧ください。",
+      "おすすめしたい商品やご質問があれば、お気軽にお問い合わせください。StealSeoulは継続的にコンテンツを更新・拡充しています。"
+    ]
+  },
+  "disclosurePage": {
+    "title": "アフィリエイト開示",
+    "paragraphs": [
+      "StealSeoulはAmazon Services LLC Associates Programの参加者です。これはAmazon.comおよび関連サイトへの広告・リンクを通じて、サイト運営者が広告料を得られるように設計されたアフィリエイトプログラムです。",
+      "本サイトの商品リンクの一部は、Amazonアフィリエイトリンクです。リンクをクリックして対象となる購入をされた場合、StealSeoulに紹介料が入ることがありますが、これによる追加費用は発生しません。",
+      "商品の選定は、実際に役立つか、価値があるかを基準に行っており、アフィリエイト報酬の有無が商品選びに影響することはありません。透明性を保つため、アフィリエイトリンクを使用していることをここに明記します。",
+      "Amazonアソシエイトとして、StealSeoulは本サイトのアフィリエイトリンクを通じた対象購入から収益を得ていますが、購入者に追加費用は発生しません。"
+    ]
+  },
+  "privacyPage": {
+    "title": "プライバシーポリシー",
+    "intro": "StealSeoulは訪問者のプライバシーを尊重します。このページでは、どのような情報をどのように扱うかを説明します。",
+    "sections": [
+      {
+        "heading": "収集する情報",
+        "body": "StealSeoulは会員登録を必要とせず、訪問者が直接入力する個人情報を収集することはありません。ただし、サイトの利用状況を把握するため、ページ閲覧数やデバイスの種類といった非識別的な分析データが自動的に収集されることがあります。"
+      },
+      {
+        "heading": "外部リンクとアフィリエイトプログラム",
+        "body": "StealSeoulはAmazonアソシエイトプログラムに参加しています。サイト内のリンクからAmazon.comに移動することがあります。サイトを離れた後のデータの取り扱いについては、Amazon自身のプライバシーポリシーが適用されます。"
+      },
+      {
+        "heading": "Cookie",
+        "body": "基本的な利用状況の分析やサイト体験の改善のためにCookieが使用されることがあります。ブラウザの設定からいつでもCookieを無効化・削除できます。"
+      },
+      {
+        "heading": "お問い合わせ",
+        "body": "本プライバシーポリシーに関するご質問は、サイトに記載の連絡先までお問い合わせください。"
+      }
+    ]
+  }
+}

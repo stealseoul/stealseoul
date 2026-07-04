@@ -1,0 +1,193 @@
+import { CategoryBase, ProductBase, PostBase } from "@/lib/types";
+
+export const categoryBases: CategoryBase[] = [
+  {
+    slug: "korean-food",
+    shortName: "K-Food",
+    emoji: "🍜",
+    gradient: "from-rose-400 to-orange-300",
+  },
+  {
+    slug: "k-beauty",
+    shortName: "K-Beauty",
+    emoji: "💄",
+    gradient: "from-pink-400 to-fuchsia-300",
+  },
+  {
+    slug: "baby-kids",
+    shortName: "Baby & Kids",
+    emoji: "🍼",
+    gradient: "from-sky-400 to-cyan-300",
+  },
+  {
+    slug: "ipx-goods",
+    shortName: "IPX Goods",
+    emoji: "🧸",
+    gradient: "from-violet-400 to-indigo-300",
+  },
+];
+
+export const productBases: ProductBase[] = [
+  {
+    slug: "shin-ramyun-multipack",
+    category: "korean-food",
+    emoji: "🍜",
+    priceRange: "$15 – $25",
+    searchKeyword: "Nongshim Shin Ramyun multipack",
+  },
+  {
+    slug: "buldak-hot-chicken-noodle",
+    category: "korean-food",
+    emoji: "🌶️",
+    priceRange: "$18 – $28",
+    searchKeyword: "Samyang Buldak Hot Chicken Flavor Ramen",
+  },
+  {
+    slug: "orion-choco-pie",
+    category: "korean-food",
+    emoji: "🍫",
+    priceRange: "$10 – $18",
+    searchKeyword: "Orion Choco Pie original box",
+  },
+  {
+    slug: "roasted-seaweed-snack",
+    category: "korean-food",
+    emoji: "🌿",
+    priceRange: "$8 – $14",
+    searchKeyword: "Korean roasted seaweed snack individual packs",
+  },
+  {
+    slug: "cosrx-snail-mucin-essence",
+    category: "k-beauty",
+    emoji: "🐌",
+    priceRange: "$18 – $25",
+    searchKeyword: "COSRX Advanced Snail 96 Mucin Power Essence",
+  },
+  {
+    slug: "innisfree-green-tea-serum",
+    category: "k-beauty",
+    emoji: "🍵",
+    priceRange: "$15 – $24",
+    searchKeyword: "Innisfree Green Tea Seed Serum",
+  },
+  {
+    slug: "drjart-cicapair-cream",
+    category: "k-beauty",
+    emoji: "🌱",
+    priceRange: "$32 – $45",
+    searchKeyword: "Dr. Jart Cicapair Cream",
+  },
+  {
+    slug: "missha-time-revolution-essence",
+    category: "k-beauty",
+    emoji: "✨",
+    priceRange: "$20 – $30",
+    searchKeyword: "Missha Time Revolution The First Treatment Essence",
+  },
+  {
+    slug: "baby-water-wipes",
+    category: "baby-kids",
+    emoji: "🧴",
+    priceRange: "$20 – $35",
+    searchKeyword: "Korean baby water wipes newborn bulk pack",
+  },
+  {
+    slug: "baby-strawberry-lotion",
+    category: "baby-kids",
+    emoji: "🍓",
+    priceRange: "$14 – $20",
+    searchKeyword: "Korean baby lotion strawberry newborn",
+  },
+  {
+    slug: "premium-baby-diapers",
+    category: "baby-kids",
+    emoji: "👶",
+    priceRange: "$25 – $40",
+    searchKeyword: "Korean premium baby diapers size box",
+  },
+  {
+    slug: "baby-food-storage-set",
+    category: "baby-kids",
+    emoji: "🥣",
+    priceRange: "$18 – $28",
+    searchKeyword: "Korean baby food storage container set freezer",
+  },
+  {
+    slug: "bt21-mini-plush-set",
+    category: "ipx-goods",
+    emoji: "🐰",
+    priceRange: "$20 – $35",
+    searchKeyword: "BT21 mini plush doll set",
+  },
+  {
+    slug: "bt21-baby-cushion",
+    category: "ipx-goods",
+    emoji: "🧸",
+    priceRange: "$25 – $40",
+    searchKeyword: "BT21 baby character cushion pillow",
+  },
+  {
+    slug: "bt21-sticker-pack",
+    category: "ipx-goods",
+    emoji: "🏷️",
+    priceRange: "$8 – $15",
+    searchKeyword: "BT21 sticker pack set",
+  },
+  {
+    slug: "bt21-tumbler",
+    category: "ipx-goods",
+    emoji: "🥤",
+    priceRange: "$18 – $30",
+    searchKeyword: "BT21 character tumbler bottle",
+  },
+];
+
+export const postBases: PostBase[] = [
+  {
+    slug: "korean-snacks-summer-top-picks",
+    category: "korean-food",
+    publishedAt: "2026-06-02",
+    readMinutes: 4,
+    coverEmoji: "🍜",
+    productSlugs: [
+      "shin-ramyun-multipack",
+      "buldak-hot-chicken-noodle",
+      "orion-choco-pie",
+      "roasted-seaweed-snack",
+    ],
+  },
+  {
+    slug: "k-beauty-daily-skincare-routine-guide",
+    category: "k-beauty",
+    publishedAt: "2026-06-10",
+    readMinutes: 5,
+    coverEmoji: "💧",
+    productSlugs: [
+      "cosrx-snail-mucin-essence",
+      "innisfree-green-tea-serum",
+      "drjart-cicapair-cream",
+      "missha-time-revolution-essence",
+    ],
+  },
+  {
+    slug: "newborn-essentials-checklist",
+    category: "baby-kids",
+    publishedAt: "2026-06-18",
+    readMinutes: 5,
+    coverEmoji: "🍼",
+    productSlugs: [
+      "baby-water-wipes",
+      "baby-strawberry-lotion",
+      "premium-baby-diapers",
+      "baby-food-storage-set",
+    ],
+  },
+  {
+    slug: "bt21-ipx-goods-beginner-guide",
+    category: "ipx-goods",
+    publishedAt: "2026-06-25",
+    readMinutes: 4,
+    coverEmoji: "🧸",
+    productSlugs: ["bt21-mini-plush-set", "bt21-baby-cushion", "bt21-sticker-pack", "bt21-tumbler"],
+  },
+];

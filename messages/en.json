@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "title": "StealSeoul | Find good deals on Korean products on Amazon",
+    "description": "StealSeoul rounds up Korean food, K-beauty, baby & kids items, and BT21/IPX goods worth buying on Amazon."
+  },
+  "nav": {
+    "blog": "Guides",
+    "about": "About",
+    "browse": "Browse"
+  },
+  "hero": {
+    "eyebrow": "StealSeoul",
+    "title": "Good Korean product deals on Amazon, all in one place",
+    "subtitle": "We track down Korean food, K-beauty, baby & kids items, and BT21/IPX goods worth buying on Amazon — so you don't have to dig for them yourself.",
+    "ctaPrimary": "Browse guides",
+    "ctaSecondary": "Explore categories"
+  },
+  "home": {
+    "categoriesHeading": "Categories",
+    "dealsHeading": "Worth a look",
+    "viewAll": "View all",
+    "articlesHeading": "Latest guides",
+    "viewAllBlog": "All guides"
+  },
+  "product": {
+    "viewOnAmazon": "Check it on Amazon",
+    "viewDetails": "View details",
+    "affiliateNote": "This is an Amazon Associates link. StealSeoul may earn a commission on qualifying purchases, at no extra cost to you.",
+    "highlightsHeading": "Why it's worth a look",
+    "detailsHeading": "Details",
+    "relatedHeading": "You might also like"
+  },
+  "category": {
+    "dealsHeading": "Worth a look",
+    "articlesHeading": "Related guides"
+  },
+  "blog": {
+    "heading": "Guides",
+    "subheading": "Category round-ups and buying guides for Korean products on Amazon.",
+    "itemsHeading": "Mentioned in this guide",
+    "readTime": "{minutes} min read"
+  },
+  "breadcrumbs": {
+    "home": "Home"
+  },
+  "languageSwitcher": {
+    "label": "Language"
+  },
+  "footer": {
+    "disclosure": "StealSeoul is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by linking to Amazon.com. As an Amazon Associate, StealSeoul earns from qualifying purchases, at no extra cost to you.",
+    "links": {
+      "about": "About",
+      "disclosure": "Affiliate Disclosure",
+      "privacy": "Privacy Policy",
+      "blog": "Guides"
+    },
+    "copyright": "StealSeoul. All rights reserved."
+  },
+  "about": {
+    "title": "About StealSeoul",
+    "paragraphs": [
+      "StealSeoul helps shoppers in the US find Korean products worth buying on Amazon — Korean food, K-beauty, baby & kids essentials, and BT21/IPX character goods. We're not a Korean grocery store or a beauty brand; we're a deal-discovery site that points you to good options already sold on Amazon.",
+      "We focus on products that are widely available and have staying power in their category, rather than chasing every new release. Each product page explains what it is, who it's likely to suit, and what to consider before buying. Our guides go a step further, grouping products by use case or occasion.",
+      "StealSeoul participates in the Amazon Associates Program, and may earn a commission when you buy through links on this site, at no extra cost to you. This helps keep the site running. See our Affiliate Disclosure page for details.",
+      "Have a product suggestion or a question? We're always updating and expanding coverage — feel free to reach out."
+    ]
+  },
+  "disclosurePage": {
+    "title": "Affiliate Disclosure",
+    "paragraphs": [
+      "StealSeoul is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.com and affiliated sites.",
+      "Some of the product links on this site are Amazon affiliate links. If you click through and make a qualifying purchase, StealSeoul may earn a commission. This comes at no additional cost to you.",
+      "We select products based on what we believe is genuinely useful or good value, and affiliate commissions do not influence which products we choose to feature. We disclose the use of affiliate links here for full transparency.",
+      "As an Amazon Associate, StealSeoul earns from qualifying purchases made through affiliate links on this site, at no additional cost to the buyer."
+    ]
+  },
+  "privacyPage": {
+    "title": "Privacy Policy",
+    "intro": "StealSeoul respects your privacy. This page explains what information we handle and how.",
+    "sections": [
+      {
+        "heading": "Information we collect",
+        "body": "StealSeoul does not require account registration and does not collect personal information that you submit directly. Non-identifying analytics data, such as page views and device type, may be collected automatically to understand site usage."
+      },
+      {
+        "heading": "Outbound links and affiliate program",
+        "body": "StealSeoul participates in the Amazon Associates Program. Links on this site may take you to Amazon.com. Any data handling that happens after you leave this site is governed by Amazon's own privacy policy."
+      },
+      {
+        "heading": "Cookies",
+        "body": "Cookies may be used for basic usage analytics and to improve the site experience. You can disable or clear cookies through your browser settings at any time."
+      },
+      {
+        "heading": "Contact",
+        "body": "If you have questions about this privacy policy, please reach out through the contact information listed on the site."
+      }
+    ]
+  }
+}
