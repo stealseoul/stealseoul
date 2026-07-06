@@ -5,6 +5,8 @@ import { getCategories, getProducts, getPosts } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 import PostCard from "@/components/PostCard";
 
+export const revalidate = 3600;
+
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: localeParam } = await params;
   setRequestLocale(localeParam as Locale);
@@ -13,7 +15,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   const [tHero, tHome] = await Promise.all([getTranslations("hero"), getTranslations("home")]);
 
   const categories = getCategories(locale);
-  const featuredProducts = getProducts(locale).slice(0, 8);
+  const featuredProducts = (await getProducts(locale)).slice(0, 8);
   const latestPosts = [...getPosts(locale)]
     .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1))
     .slice(0, 4);

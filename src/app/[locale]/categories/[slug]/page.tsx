@@ -6,6 +6,8 @@ import { getAllCategorySlugs, getCategory, getProductsByCategory, getPostsByCate
 import ProductCard from "@/components/ProductCard";
 import PostCard from "@/components/PostCard";
 
+export const revalidate = 3600;
+
 export function generateStaticParams() {
   return locales.flatMap((locale) => getAllCategorySlugs().map((slug) => ({ locale, slug })));
 }
@@ -41,7 +43,7 @@ export default async function CategoryPage({
     getTranslations("category"),
   ]);
 
-  const categoryProducts = getProductsByCategory(locale, slug);
+  const categoryProducts = await getProductsByCategory(locale, slug);
   const categoryPosts = getPostsByCategory(locale, slug);
 
   return (

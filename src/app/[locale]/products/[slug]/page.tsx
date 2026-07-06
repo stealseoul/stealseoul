@@ -6,8 +6,12 @@ import { getAllProductSlugs, getProduct, getProductsByCategory, getCategory } fr
 import AmazonButton from "@/components/AmazonButton";
 import ProductCard from "@/components/ProductCard";
 
-export function generateStaticParams() {
-  return locales.flatMap((locale) => getAllProductSlugs().map((slug) => ({ locale, slug })));
+export const dynamicParams = true;
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const slugs = await getAllProductSlugs();
+  return locales.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
 }
 
 export async function generateMetadata({
@@ -16,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const product = getProduct(locale as Locale, slug);
+  const product = await getProduct(locale as Locale, slug);
   if (!product) return {};
   return {
     title: product.name,
@@ -33,7 +37,7 @@ export default async function ProductPage({
   const locale = localeParam as Locale;
   setRequestLocale(locale);
 
-  const product = getProduct(locale, slug);
+  const product = await getProduct(locale, slug);
   if (!product) notFound();
 
   const [tBreadcrumbs, tProduct] = await Promise.all([
@@ -42,7 +46,7 @@ export default async function ProductPage({
   ]);
 
   const category = getCategory(locale, product.category);
-  const related = getProductsByCategory(locale, product.category)
+  const related = (await getProductsByCategory(locale, product.category))
     .filter((p) => p.slug !== product.slug)
     .slice(0, 4);
 

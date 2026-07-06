@@ -5,6 +5,8 @@ import { Locale, locales } from "@/i18n/locales";
 import { getAllPostSlugs, getPost, getCategory, getProduct } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 
+export const revalidate = 3600;
+
 export function generateStaticParams() {
   return locales.flatMap((locale) => getAllPostSlugs().map((slug) => ({ locale, slug })));
 }
@@ -41,9 +43,9 @@ export default async function BlogPostPage({
   ]);
 
   const category = getCategory(locale, post.category);
-  const relatedProducts = post.productSlugs
-    .map((s) => getProduct(locale, s))
-    .filter((p) => p !== undefined);
+  const relatedProducts = (
+    await Promise.all(post.productSlugs.map((s) => getProduct(locale, s)))
+  ).filter((p) => p !== undefined);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
