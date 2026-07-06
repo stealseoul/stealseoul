@@ -1,7 +1,7 @@
 import { Locale } from "@/i18n/locales";
 import { categoryBases, productBases, postBases } from "./base";
 import { Category, Product, Post, CategorySlug } from "@/lib/types";
-import { getAdminProducts } from "./supabase";
+import { getAdminProducts } from "./admin-products";
 
 import * as en from "./content/en";
 import * as ko from "./content/ko";

@@ -1,23 +1,19 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { auth, NEON_AUTH_CONFIGURED } from "@/lib/auth/server";
+import { DB_CONFIGURED } from "@/lib/db";
+import { isAllowedAdmin } from "@/lib/admin-allowlist";
 import { logoutAction } from "../login/actions";
 
-const SUPABASE_CONFIGURED = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-);
-
 export default async function ProtectedAdminLayout({ children }: { children: React.ReactNode }) {
-  if (!SUPABASE_CONFIGURED) {
+  if (!NEON_AUTH_CONFIGURED || !DB_CONFIGURED || !auth) {
     redirect("/admin/login");
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: session } = await auth.getSession();
+  const email = session?.user?.email;
 
-  if (!user) {
+  if (!email || !(await isAllowedAdmin(email))) {
     redirect("/admin/login");
   }
 
@@ -29,6 +25,7 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
             StealSeoul Admin
           </Link>
           <nav className="flex items-center gap-4 text-sm">
+            <span className="text-neutral-400">{email}</span>
             <Link href="/admin/products/new" className="text-orange-600 hover:underline">
               + Add product
             </Link>
