@@ -8,6 +8,7 @@ import { revalidateProductPaths } from "@/lib/revalidate-product";
 import { scrapeAmazonProductPage } from "@/lib/amazon-scrape";
 import { generateLifestyleImage, GenerateLifestyleImageResult } from "@/lib/lifestyle-image";
 import { parseAmazonPageText, ParsedProductInfo } from "@/lib/parse-page-text";
+import { extractInfoFromImages, ExtractInfoFromImagesResult, ImageInput } from "@/lib/parse-image-info";
 import { CategorySlug } from "@/lib/types";
 
 export interface AmazonPreviewResult {
@@ -73,6 +74,18 @@ export async function fetchAmazonPreview(rawInput: string): Promise<AmazonPrevie
 // carries none of the bot-detection/ToS concerns scraping does.
 export async function extractFromPageText(rawText: string): Promise<ParsedProductInfo> {
   return parseAmazonPageText(rawText);
+}
+
+// OCRs infographic/spec images the admin already saved to their own device
+// (no Amazon fetch here — see src/lib/parse-image-info.ts). Auth-gated
+// since each call costs real money against the Gemini API, same as image
+// generation.
+export async function extractFromImages(images: ImageInput[]): Promise<ExtractInfoFromImagesResult> {
+  const email = await getAuthorizedAdminEmail();
+  if (!email) {
+    return { ok: false, error: "Not authorized." };
+  }
+  return extractInfoFromImages(images);
 }
 
 export interface CreateProductInput {

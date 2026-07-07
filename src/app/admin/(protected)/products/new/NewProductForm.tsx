@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetchAmazonPreview, createProduct, generateProductImage, extractFromPageText } from "./actions";
+import {
+  fetchAmazonPreview,
+  createProduct,
+  generateProductImage,
+  extractFromPageText,
+  extractFromImages,
+} from "./actions";
 import { slugify } from "@/lib/slugify";
 import { Category, CategorySlug } from "@/lib/types";
 
@@ -17,6 +23,10 @@ export default function NewProductForm({ categories }: { categories: Category[] 
   const [pageText, setPageText] = useState("");
   const [extracting, setExtracting] = useState(false);
   const [extractNote, setExtractNote] = useState<string | null>(null);
+
+  const [infoImages, setInfoImages] = useState<File[]>([]);
+  const [extractingImages, setExtractingImages] = useState(false);
+  const [imageExtractNote, setImageExtractNote] = useState<string | null>(null);
 
   const [asin, setAsin] = useState("");
   const [amazonUrl, setAmazonUrl] = useState("");
@@ -127,6 +137,40 @@ export default function NewProductForm({ categories }: { categories: Category[] 
     setRevealed(true);
   }
 
+  function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve((reader.result as string).split(",")[1] ?? "");
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleExtractFromImages() {
+    if (infoImages.length === 0) return;
+    setExtractingImages(true);
+    setImageExtractNote(null);
+
+    const images = await Promise.all(
+      infoImages.map(async (file) => ({
+        data: await fileToBase64(file),
+        mimeType: file.type || "image/jpeg",
+      })),
+    );
+
+    const result = await extractFromImages(images);
+    setExtractingImages(false);
+
+    if (!result.ok || !result.text) {
+      setImageExtractNote(result.error ?? "Couldn't read any product info from those images.");
+      return;
+    }
+
+    setHighlightsText((prev) => (prev ? `${prev}\n${result.text}` : (result.text ?? "")));
+    setImageExtractNote("Extracted text appended to Highlights below — review and trim before saving.");
+    setRevealed(true);
+  }
+
   function handleNameChange(value: string) {
     setName(value);
     if (!slugTouched) {
@@ -217,6 +261,33 @@ export default function NewProductForm({ categories }: { categories: Category[] 
           {extracting ? "Extracting…" : "Extract from pasted text"}
         </button>
         {extractNote && <p className="mt-2 text-sm text-neutral-500">{extractNote}</p>}
+      </div>
+
+      <div className="rounded-2xl border border-neutral-200 bg-white p-6">
+        <label className="text-sm font-medium text-neutral-700">
+          Or: upload infographic / spec images
+        </label>
+        <p className="mt-1 text-xs text-neutral-500">
+          Save the nutrition facts, spec sheet, ingredient list, or size-chart images from
+          the Amazon page to your device (right-click → save, or a screenshot), then upload
+          them here. The images are only used to read the text off them — they&apos;re never
+          stored or shown on the site.
+        </p>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={(e) => setInfoImages(Array.from(e.target.files ?? []))}
+          className="mt-2 block w-full text-sm"
+        />
+        <button
+          onClick={handleExtractFromImages}
+          disabled={extractingImages || infoImages.length === 0}
+          className="mt-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+        >
+          {extractingImages ? "Reading images…" : "Extract info from images"}
+        </button>
+        {imageExtractNote && <p className="mt-2 text-sm text-neutral-500">{imageExtractNote}</p>}
       </div>
 
       {revealed && (
