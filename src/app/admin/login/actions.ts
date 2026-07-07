@@ -25,9 +25,16 @@ export async function loginAction(_prevState: LoginState | undefined, formData: 
     return { error: "This account isn't authorized as an admin." };
   }
 
-  const { error } = await auth.signIn.email({ email, password });
-  if (error) {
-    return { error: "Invalid email or password." };
+  let signInError: { message?: string } | null;
+  try {
+    const result = await auth.signIn.email({ email, password });
+    signInError = result.error;
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Network error — please try again." };
+  }
+
+  if (signInError) {
+    return { error: signInError.message ?? "Invalid email or password." };
   }
 
   redirect("/admin");
