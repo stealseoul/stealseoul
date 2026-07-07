@@ -1,11 +1,18 @@
+import "../globals.css";
+import { Geist } from "next/font/google";
 import { NEON_AUTH_CONFIGURED } from "@/lib/auth/server";
 import { DB_CONFIGURED } from "@/lib/db";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
 
 const ADMIN_CONFIGURED = NEON_AUTH_CONFIGURED && DB_CONFIGURED;
 
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${geistSans.variable} antialiased`}>
       <body className="min-h-screen bg-neutral-50 font-sans text-neutral-900">
         {ADMIN_CONFIGURED ? (
           children
