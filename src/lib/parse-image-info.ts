@@ -36,13 +36,16 @@ export async function extractInfoFromImages(images: ImageInput[]): Promise<Extra
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-    const interaction = await ai.interactions.create({
-      model: "gemini-3.5-flash",
-      input: [
-        { type: "text", text: PROMPT },
-        ...images.map((img) => ({ type: "image" as const, data: img.data, mime_type: img.mimeType })),
-      ],
-    });
+    const interaction = await ai.interactions.create(
+      {
+        model: "gemini-3.5-flash",
+        input: [
+          { type: "text", text: PROMPT },
+          ...images.map((img) => ({ type: "image" as const, data: img.data, mime_type: img.mimeType })),
+        ],
+      },
+      { timeout: 25000 },
+    );
 
     const text = interaction.output_text?.trim();
     if (!text) {

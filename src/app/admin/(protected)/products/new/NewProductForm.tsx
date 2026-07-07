@@ -143,12 +143,36 @@ export default function NewProductForm({ categories }: { categories: Category[] 
     setRevealed(true);
   }
 
-  function fileToBase64(file: File): Promise<string> {
+  // Downscales + re-encodes as JPEG before upload — phone screenshots/photos
+  // are often several MB at 3000px+, which makes both the upload and the
+  // model's own read of the image much slower than it needs to be for
+  // reading printed text off an infographic.
+  function compressImage(file: File, maxDimension = 1400, quality = 0.82): Promise<{ data: string; mimeType: string }> {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve((reader.result as string).split(",")[1] ?? "");
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let { width, height } = img;
+        if (width > maxDimension || height > maxDimension) {
+          const scale = maxDimension / Math.max(width, height);
+          width = Math.round(width * scale);
+          height = Math.round(height * scale);
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas isn't supported in this browser."));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        resolve({ data: dataUrl.split(",")[1] ?? "", mimeType: "image/jpeg" });
+      };
+      img.onerror = () => reject(new Error("Couldn't read that image file."));
+      img.src = url;
     });
   }
 
@@ -157,12 +181,14 @@ export default function NewProductForm({ categories }: { categories: Category[] 
     setExtractingImages(true);
     setImageExtractNote(null);
 
-    const images = await Promise.all(
-      infoImages.map(async (file) => ({
-        data: await fileToBase64(file),
-        mimeType: file.type || "image/jpeg",
-      })),
-    );
+    let images: { data: string; mimeType: string }[];
+    try {
+      images = await Promise.all(infoImages.map((file) => compressImage(file)));
+    } catch (e) {
+      setExtractingImages(false);
+      setImageExtractNote(e instanceof Error ? e.message : "Couldn't process those images.");
+      return;
+    }
 
     const result = await extractFromImages(images);
     setExtractingImages(false);
