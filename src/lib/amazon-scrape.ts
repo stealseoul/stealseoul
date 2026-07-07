@@ -27,6 +27,26 @@ function decodeHtmlEntities(text: string): string {
     .trim();
 }
 
+// Amazon frequently serves a bot-check/CAPTCHA or generic homepage instead
+// of the real product page for non-browser requests. Those pages still
+// have a <title> (often just "Amazon.com"), which would otherwise look
+// like a "successful" scrape and silently fill the form with garbage.
+// Recognize the common tells and treat them as a failure instead.
+const BLOCK_PAGE_MARKERS = [
+  "robot check",
+  "enter the characters you see below",
+  "api-services-support@amazon.com",
+  "to discuss automated access",
+  "sorry, we just need to make sure you're not a robot",
+];
+
+function looksLikeBlockPage(html: string, title: string | undefined): boolean {
+  const lowerHtml = html.toLowerCase();
+  if (BLOCK_PAGE_MARKERS.some((marker) => lowerHtml.includes(marker))) return true;
+  const normalizedTitle = title?.trim().toLowerCase();
+  return normalizedTitle === "amazon.com" || normalizedTitle === "amazon.com. spend less. smile more.";
+}
+
 export async function scrapeAmazonProductPage(url: string): Promise<ScrapedProductData | null> {
   try {
     const controller = new AbortController();
@@ -54,6 +74,7 @@ export async function scrapeAmazonProductPage(url: string): Promise<ScrapedProdu
     const priceText = html.match(/\$[0-9]+(?:\.[0-9]{2})?/)?.[0];
 
     if (!title && !description && !imageUrl) return null;
+    if (looksLikeBlockPage(html, title)) return null;
 
     return {
       title: title ? decodeHtmlEntities(title) : undefined,
