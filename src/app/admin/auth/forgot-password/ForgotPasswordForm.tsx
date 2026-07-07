@@ -13,17 +13,22 @@ export default function ForgotPasswordForm() {
     setStatus("sending");
     setError(null);
 
-    const { error } = await authClient.requestPasswordReset({
-      email,
-      redirectTo: `${window.location.origin}/admin/auth/reset-password`,
-    });
+    try {
+      const { error } = await authClient.requestPasswordReset({
+        email,
+        redirectTo: `${window.location.origin}/admin/auth/reset-password`,
+      });
 
-    if (error) {
+      if (error) {
+        setStatus("error");
+        setError(error.message ?? "Something went wrong.");
+        return;
+      }
+      setStatus("sent");
+    } catch (err) {
       setStatus("error");
-      setError(error.message ?? "Something went wrong.");
-      return;
+      setError(err instanceof Error ? err.message : "Network error — please try again.");
     }
-    setStatus("sent");
   }
 
   if (status === "sent") {

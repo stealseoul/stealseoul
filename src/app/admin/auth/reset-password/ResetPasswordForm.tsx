@@ -21,15 +21,20 @@ export default function ResetPasswordForm() {
     setStatus("saving");
     setError(null);
 
-    const { error } = await authClient.resetPassword({ newPassword, token });
+    try {
+      const { error } = await authClient.resetPassword({ newPassword, token });
 
-    if (error) {
+      if (error) {
+        setStatus("error");
+        setError(error.message ?? "Something went wrong.");
+        return;
+      }
+
+      router.push("/admin/login");
+    } catch (err) {
       setStatus("error");
-      setError(error.message ?? "Something went wrong.");
-      return;
+      setError(err instanceof Error ? err.message : "Network error — please try again.");
     }
-
-    router.push("/admin/login");
   }
 
   if (tokenError || !token) {
