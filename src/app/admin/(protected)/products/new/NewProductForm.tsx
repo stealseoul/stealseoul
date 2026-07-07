@@ -110,6 +110,14 @@ export default function NewProductForm({ categories }: { categories: Category[] 
       setHighlightsText(result.highlights.join("\n"));
       found++;
     }
+    if (result.summary) {
+      setSummary(result.summary);
+      found++;
+    }
+    if (result.description) {
+      setDescription(result.description);
+      found++;
+    }
 
     setExtractNote(
       found > 0
