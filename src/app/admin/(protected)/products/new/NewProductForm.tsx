@@ -82,7 +82,7 @@ function ImageExtractSection({
 }) {
   const [images, setImages] = useState<File[]>([]);
   const [extracting, setExtracting] = useState(false);
-  const [note, setNote] = useState<string | null>(null);
+  const [note, setNote] = useState<{ kind: "success" | "error"; text: string } | null>(null);
 
   async function handleExtract() {
     if (images.length === 0) return;
@@ -111,22 +111,33 @@ function ImageExtractSection({
       const result = await Promise.race([extractFromImages(compressed), timeout]);
 
       if (!result.ok || !result.text) {
-        setNote(result.error ?? "Couldn't read any product info from those images.");
+        setNote({ kind: "error", text: result.error ?? "Couldn't read any product info from those images." });
         return;
       }
 
+      // Surface concrete proof the model actually read something, rather
+      // than a generic "done" message that looks identical whether it
+      // found real content or effectively nothing.
+      const lineCount = result.text
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean).length;
+      const preview = result.text.length > 160 ? `${result.text.slice(0, 160)}…` : result.text;
+
       onExtracted(result.text);
-      setNote(
-        overflow > 0
-          ? `Used the first ${MAX_INFO_IMAGES} images (${overflow} left over — run again for those). Text appended to Highlights below.`
-          : "Extracted text appended to Highlights below — review and trim before saving.",
-      );
+      setNote({
+        kind: "success",
+        text: `Read ${lineCount} line(s) from ${batch.length} image(s)${
+          overflow > 0 ? ` (${overflow} left over — run again for those)` : ""
+        } — appended to Highlights below. Preview: "${preview}"`,
+      });
     } catch (e) {
-      setNote(
-        e instanceof Error
+      setNote({
+        kind: "error",
+        text: e instanceof Error
           ? `Something went wrong: ${e.message}`
           : "Something went wrong reading those images — try again with fewer or smaller images.",
-      );
+      });
     } finally {
       setExtracting(false);
     }
@@ -162,7 +173,9 @@ function ImageExtractSection({
       >
         {extracting ? "Reading images…" : "Extract info from images"}
       </button>
-      {note && <p className="mt-2 text-sm text-neutral-500">{note}</p>}
+      {note && (
+        <p className={`mt-2 text-sm ${note.kind === "error" ? "text-red-600" : "text-green-700"}`}>{note.text}</p>
+      )}
     </div>
   );
 }
