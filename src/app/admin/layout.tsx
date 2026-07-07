@@ -1,17 +1,14 @@
-import { NeonAuthUIProvider } from "@neondatabase/auth-ui";
-import "@neondatabase/auth-ui/css";
 import { NEON_AUTH_CONFIGURED } from "@/lib/auth/server";
-import { authClient } from "@/lib/auth/client";
 import { DB_CONFIGURED } from "@/lib/db";
 
 const ADMIN_CONFIGURED = NEON_AUTH_CONFIGURED && DB_CONFIGURED;
 
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <body className="min-h-screen bg-neutral-50 font-sans text-neutral-900">
         {ADMIN_CONFIGURED ? (
-          <NeonAuthUIProvider authClient={authClient}>{children}</NeonAuthUIProvider>
+          children
         ) : (
           <div className="flex min-h-screen items-center justify-center p-6">
             <div className="max-w-md rounded-2xl border border-neutral-200 bg-white p-8 text-center">
