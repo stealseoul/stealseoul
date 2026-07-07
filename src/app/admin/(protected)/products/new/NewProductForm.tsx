@@ -17,7 +17,130 @@ import type { ExtractInfoFromImagesResult } from "@/lib/parse-image-info";
 // Sending a large batch of images to Gemini in one request gets slow (and
 // more likely to hit a platform execution limit) fast — a handful per click
 // keeps each extraction quick; admins can just run it again for the rest.
-const MAX_INFO_IMAGES = 6;
+const MAX_INFO_IMAGES = 8;
+
+// Downscales + re-encodes as JPEG before upload — phone screenshots/photos
+// are often several MB at 3000px+, which makes both the upload and the
+// model's own read of the image much slower than it needs to be for
+// reading printed text off an infographic.
+function compressImage(file: File, maxDimension = 1400, quality = 0.82): Promise<{ data: string; mimeType: string }> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxDimension || height > maxDimension) {
+        const scale = maxDimension / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Canvas isn't supported in this browser."));
+        return;
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL("image/jpeg", quality);
+      resolve({ data: dataUrl.split(",")[1] ?? "", mimeType: "image/jpeg" });
+    };
+    img.onerror = () => reject(new Error("Couldn't read that image file."));
+    img.src = url;
+  });
+}
+
+function ImageExtractSection({
+  title,
+  description,
+  onExtracted,
+}: {
+  title: string;
+  description: string;
+  onExtracted: (text: string) => void;
+}) {
+  const [images, setImages] = useState<File[]>([]);
+  const [extracting, setExtracting] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+
+  async function handleExtract() {
+    if (images.length === 0) return;
+    const overflow = images.length - MAX_INFO_IMAGES;
+    const batch = images.slice(0, MAX_INFO_IMAGES);
+    setExtracting(true);
+    setNote(null);
+
+    let compressed: { data: string; mimeType: string }[];
+    try {
+      compressed = await Promise.all(batch.map((file) => compressImage(file)));
+    } catch (e) {
+      setExtracting(false);
+      setNote(e instanceof Error ? e.message : "Couldn't process those images.");
+      return;
+    }
+
+    // Server actions can go silent instead of erroring cleanly if the
+    // underlying function is killed by a platform execution limit, which
+    // would otherwise leave this stuck on "Reading images..." forever.
+    const timeout = new Promise<ExtractInfoFromImagesResult>((resolve) =>
+      setTimeout(
+        () => resolve({ ok: false, error: "Timed out — try again with fewer images (2-3 at a time works best)." }),
+        55000,
+      ),
+    );
+
+    const result = await Promise.race([extractFromImages(compressed), timeout]);
+    setExtracting(false);
+
+    if (!result.ok || !result.text) {
+      setNote(result.error ?? "Couldn't read any product info from those images.");
+      return;
+    }
+
+    onExtracted(result.text);
+    setNote(
+      overflow > 0
+        ? `Used the first ${MAX_INFO_IMAGES} images (${overflow} left over — run again for those). Text appended to Highlights below.`
+        : "Extracted text appended to Highlights below — review and trim before saving.",
+    );
+  }
+
+  return (
+    <div>
+      <p className="text-sm font-medium text-neutral-700">{title}</p>
+      <p className="mt-1 text-xs text-neutral-500">{description}</p>
+      <div className="mt-2 flex flex-wrap items-center gap-3">
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium hover:bg-neutral-50">
+          Choose images
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={(e) => setImages(Array.from(e.target.files ?? []))}
+            className="hidden"
+          />
+        </label>
+        <span className="text-sm text-neutral-500">
+          {images.length > 0
+            ? `${images.length} image(s) selected${
+                images.length > MAX_INFO_IMAGES ? ` — only the first ${MAX_INFO_IMAGES} will be used` : ""
+              }`
+            : "No images selected"}
+        </span>
+      </div>
+      <button
+        onClick={handleExtract}
+        disabled={extracting || images.length === 0}
+        className="mt-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+      >
+        {extracting ? "Reading images…" : "Extract info from images"}
+      </button>
+      {note && <p className="mt-2 text-sm text-neutral-500">{note}</p>}
+    </div>
+  );
+}
 
 export default function NewProductForm({ categories }: { categories: Category[] }) {
   const router = useRouter();
@@ -30,10 +153,6 @@ export default function NewProductForm({ categories }: { categories: Category[] 
   const [pageText, setPageText] = useState("");
   const [extracting, setExtracting] = useState(false);
   const [extractNote, setExtractNote] = useState<string | null>(null);
-
-  const [infoImages, setInfoImages] = useState<File[]>([]);
-  const [extractingImages, setExtractingImages] = useState(false);
-  const [imageExtractNote, setImageExtractNote] = useState<string | null>(null);
 
   const [asin, setAsin] = useState("");
   const [amazonUrl, setAmazonUrl] = useState("");
@@ -149,80 +268,9 @@ export default function NewProductForm({ categories }: { categories: Category[] 
     setRevealed(true);
   }
 
-  // Downscales + re-encodes as JPEG before upload — phone screenshots/photos
-  // are often several MB at 3000px+, which makes both the upload and the
-  // model's own read of the image much slower than it needs to be for
-  // reading printed text off an infographic.
-  function compressImage(file: File, maxDimension = 1400, quality = 0.82): Promise<{ data: string; mimeType: string }> {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      const url = URL.createObjectURL(file);
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        let { width, height } = img;
-        if (width > maxDimension || height > maxDimension) {
-          const scale = maxDimension / Math.max(width, height);
-          width = Math.round(width * scale);
-          height = Math.round(height * scale);
-        }
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          reject(new Error("Canvas isn't supported in this browser."));
-          return;
-        }
-        ctx.drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL("image/jpeg", quality);
-        resolve({ data: dataUrl.split(",")[1] ?? "", mimeType: "image/jpeg" });
-      };
-      img.onerror = () => reject(new Error("Couldn't read that image file."));
-      img.src = url;
-    });
-  }
-
-  async function handleExtractFromImages() {
-    if (infoImages.length === 0) return;
-    const overflow = infoImages.length - MAX_INFO_IMAGES;
-    const batch = infoImages.slice(0, MAX_INFO_IMAGES);
-    setExtractingImages(true);
-    setImageExtractNote(null);
-
-    let images: { data: string; mimeType: string }[];
-    try {
-      images = await Promise.all(batch.map((file) => compressImage(file)));
-    } catch (e) {
-      setExtractingImages(false);
-      setImageExtractNote(e instanceof Error ? e.message : "Couldn't process those images.");
-      return;
-    }
-
-    // Server actions can go silent instead of erroring cleanly if the
-    // underlying function is killed by a platform execution limit, which
-    // would otherwise leave this stuck on "Reading images..." forever.
-    const timeout = new Promise<ExtractInfoFromImagesResult>((resolve) =>
-      setTimeout(
-        () => resolve({ ok: false, error: "Timed out — try again with fewer images (2-3 at a time works best)." }),
-        45000,
-      ),
-    );
-
-    const result = await Promise.race([extractFromImages(images), timeout]);
-    setExtractingImages(false);
-
-    if (!result.ok || !result.text) {
-      setImageExtractNote(result.error ?? "Couldn't read any product info from those images.");
-      return;
-    }
-
-    setHighlightsText((prev) => (prev ? `${prev}\n${result.text}` : (result.text ?? "")));
-    setEmoji(pickEmoji(`${name} ${highlightsText} ${result.text}`, category));
-    setImageExtractNote(
-      overflow > 0
-        ? `Used the first ${MAX_INFO_IMAGES} images (${overflow} left over — run again for those). Text appended to Highlights below — review and trim before saving.`
-        : "Extracted text appended to Highlights below — review and trim before saving.",
-    );
+  function handleImageInfoExtracted(text: string) {
+    setHighlightsText((prev) => (prev ? `${prev}\n${text}` : text));
+    setEmoji(pickEmoji(`${name} ${highlightsText} ${text}`, category));
     setRevealed(true);
   }
 
@@ -318,41 +366,30 @@ export default function NewProductForm({ categories }: { categories: Category[] 
         {extractNote && <p className="mt-2 text-sm text-neutral-500">{extractNote}</p>}
       </div>
 
-      <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-        <p className="text-sm font-medium text-neutral-700">Or: upload infographic / spec images</p>
-        <p className="mt-1 text-xs text-neutral-500">
-          Save the nutrition facts, spec sheet, ingredient list, or size-chart images from
-          the Amazon page to your device (right-click → save, or a screenshot), then upload
-          them here. The images are only used to read the text off them — they&apos;re never
-          stored or shown on the site.
-        </p>
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium hover:bg-neutral-50">
-            Choose images
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={(e) => setInfoImages(Array.from(e.target.files ?? []))}
-              className="hidden"
-            />
-          </label>
-          <span className="text-sm text-neutral-500">
-            {infoImages.length > 0
-              ? `${infoImages.length} image(s) selected${
-                  infoImages.length > MAX_INFO_IMAGES ? ` — only the first ${MAX_INFO_IMAGES} will be used` : ""
-                }`
-              : "No images selected"}
-          </span>
+      <div className="space-y-6 rounded-2xl border border-neutral-200 bg-white p-6">
+        <div>
+          <p className="text-sm font-medium text-neutral-700">Or: upload product images</p>
+          <p className="mt-1 text-xs text-neutral-500">
+            Save images from the Amazon page to your device (right-click → save, or a
+            screenshot), then upload them below to read the text off them. Nothing is fetched
+            from Amazon, and the images themselves are never stored or shown on the site —
+            only the extracted text ever reaches the form.
+          </p>
         </div>
-        <button
-          onClick={handleExtractFromImages}
-          disabled={extractingImages || infoImages.length === 0}
-          className="mt-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-        >
-          {extractingImages ? "Reading images…" : "Extract info from images"}
-        </button>
-        {imageExtractNote && <p className="mt-2 text-sm text-neutral-500">{imageExtractNote}</p>}
+
+        <ImageExtractSection
+          title={`Main images (up to ${MAX_INFO_IMAGES})`}
+          description="The product gallery images at the top of the listing."
+          onExtracted={handleImageInfoExtracted}
+        />
+
+        <div className="border-t border-neutral-100 pt-6">
+          <ImageExtractSection
+            title={`A+ Content (up to ${MAX_INFO_IMAGES})`}
+            description="The brand's enhanced content images further down the listing (nutrition panels, spec sheets, lifestyle photos with callouts, etc.)."
+            onExtracted={handleImageInfoExtracted}
+          />
+        </div>
       </div>
 
       {revealed && (

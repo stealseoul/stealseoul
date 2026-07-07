@@ -44,7 +44,7 @@ export async function extractInfoFromImages(images: ImageInput[]): Promise<Extra
           ...images.map((img) => ({ type: "image" as const, data: img.data, mime_type: img.mimeType })),
         ],
       },
-      { timeout: 25000 },
+      { timeout: 40000 },
     );
 
     const text = interaction.output_text?.trim();
