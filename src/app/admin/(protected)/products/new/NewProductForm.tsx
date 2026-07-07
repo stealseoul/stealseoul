@@ -10,6 +10,7 @@ import {
   extractFromImages,
 } from "./actions";
 import { slugify } from "@/lib/slugify";
+import { pickEmoji } from "@/lib/pick-emoji";
 import { Category, CategorySlug } from "@/lib/types";
 
 export default function NewProductForm({ categories }: { categories: Category[] }) {
@@ -81,6 +82,8 @@ export default function NewProductForm({ categories }: { categories: Category[] 
       setName(result.title ?? "");
       setDescription(result.description ?? "");
       setPriceRange(result.priceText ? `${result.priceText}` : "");
+      const combinedText = `${result.title ?? ""} ${result.description ?? ""}`;
+      if (combinedText.trim()) setEmoji(pickEmoji(combinedText, category));
       setFetchNote("Auto-filled from the product page — review every field before saving.");
     } else {
       setFetchNote("Couldn't auto-fetch details (Amazon likely blocked the request) — enter everything manually below.");
@@ -129,6 +132,9 @@ export default function NewProductForm({ categories }: { categories: Category[] 
       found++;
     }
 
+    const combinedText = [result.title, result.brand, ...result.highlights].filter(Boolean).join(" ");
+    if (combinedText) setEmoji(pickEmoji(combinedText, category));
+
     setExtractNote(
       found > 0
         ? `Extracted ${found} field(s) from the pasted text — review everything below before saving.`
@@ -167,6 +173,7 @@ export default function NewProductForm({ categories }: { categories: Category[] 
     }
 
     setHighlightsText((prev) => (prev ? `${prev}\n${result.text}` : (result.text ?? "")));
+    setEmoji(pickEmoji(`${name} ${highlightsText} ${result.text}`, category));
     setImageExtractNote("Extracted text appended to Highlights below — review and trim before saving.");
     setRevealed(true);
   }
