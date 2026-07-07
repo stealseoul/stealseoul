@@ -46,7 +46,7 @@ export default function NewProductForm({ categories }: { categories: Category[] 
 
     setAsin(result.asin);
     setAmazonUrl(result.sourceUrl);
-    setSearchKeyword((prev) => prev || result.title || "");
+    setSearchKeyword((prev) => prev || result.keywords || result.title || "");
 
     if (result.ok) {
       setName(result.title ?? "");

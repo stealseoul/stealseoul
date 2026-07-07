@@ -16,6 +16,7 @@ export interface AmazonPreviewResult {
   description?: string;
   imageUrl?: string;
   priceText?: string;
+  keywords?: string;
 }
 
 function extractAsin(raw: string): string | null {
@@ -26,6 +27,21 @@ function extractAsin(raw: string): string | null {
   if (gpMatch) return gpMatch[1].toUpperCase();
   if (/^[A-Z0-9]{10}$/i.test(trimmed)) return trimmed.toUpperCase();
   return null;
+}
+
+// Amazon search/session links carry the shopper's original search term in
+// a `keywords` query param (e.g. from a SiteStripe link generated off a
+// search results page) — worth surfacing as a suggested search keyword
+// even though we drop the rest of that session-specific query string.
+function extractKeywords(raw: string): string | undefined {
+  try {
+    const url = new URL(raw.trim());
+    const keywords = url.searchParams.get("keywords");
+    if (!keywords) return undefined;
+    return decodeURIComponent(keywords.replace(/\+/g, " "));
+  } catch {
+    return undefined;
+  }
 }
 
 // The only place in the app that ever fetches an Amazon page. Manual,
@@ -48,6 +64,7 @@ export async function fetchAmazonPreview(rawInput: string): Promise<AmazonPrevie
     description: scraped?.description,
     imageUrl: scraped?.imageUrl,
     priceText: scraped?.priceText,
+    keywords: extractKeywords(rawInput),
   };
 }
 
