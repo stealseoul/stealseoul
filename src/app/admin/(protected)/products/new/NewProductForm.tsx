@@ -264,22 +264,28 @@ export default function NewProductForm({ categories }: { categories: Category[] 
       </div>
 
       <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-        <label className="text-sm font-medium text-neutral-700">
-          Or: upload infographic / spec images
-        </label>
+        <p className="text-sm font-medium text-neutral-700">Or: upload infographic / spec images</p>
         <p className="mt-1 text-xs text-neutral-500">
           Save the nutrition facts, spec sheet, ingredient list, or size-chart images from
           the Amazon page to your device (right-click → save, or a screenshot), then upload
           them here. The images are only used to read the text off them — they&apos;re never
           stored or shown on the site.
         </p>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={(e) => setInfoImages(Array.from(e.target.files ?? []))}
-          className="mt-2 block w-full text-sm"
-        />
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium hover:bg-neutral-50">
+            Choose images
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => setInfoImages(Array.from(e.target.files ?? []))}
+              className="hidden"
+            />
+          </label>
+          <span className="text-sm text-neutral-500">
+            {infoImages.length > 0 ? `${infoImages.length} image(s) selected` : "No images selected"}
+          </span>
+        </div>
         <button
           onClick={handleExtractFromImages}
           disabled={extractingImages || infoImages.length === 0}
