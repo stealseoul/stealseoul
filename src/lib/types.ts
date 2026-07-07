@@ -20,6 +20,7 @@ export interface ProductBase {
   emoji: string;
   priceRange: string;
   searchKeyword: string;
+  asin?: string;
 }
 
 export interface ProductContent {

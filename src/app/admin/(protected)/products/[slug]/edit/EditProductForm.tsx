@@ -23,6 +23,7 @@ export default function EditProductForm({
   const [searchKeyword, setSearchKeyword] = useState(product.searchKeyword);
   const [category, setCategory] = useState<CategorySlug>(product.category);
   const [emoji, setEmoji] = useState(product.emoji);
+  const [asin, setAsin] = useState(product.asin ?? "");
   const [verifiedDiscountNote, setVerifiedDiscountNote] = useState("");
 
   const [saving, setSaving] = useState(false);
@@ -45,6 +46,7 @@ export default function EditProductForm({
       emoji,
       priceRange,
       searchKeyword,
+      asin: asin || undefined,
       verifiedDiscountNote: verifiedDiscountNote || undefined,
       name,
       brand,
@@ -138,11 +140,20 @@ export default function EditProductForm({
         />
       </Field>
 
-      <Field label="Amazon search keyword">
+      <Field label="Amazon search keyword (used only if no ASIN is set below)">
         <input
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
           className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+        />
+      </Field>
+
+      <Field label="Amazon ASIN (links straight to the product page instead of a search)">
+        <input
+          value={asin}
+          onChange={(e) => setAsin(e.target.value.toUpperCase())}
+          placeholder="e.g. B0D7J4T14L"
+          className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm font-mono"
         />
       </Field>
 

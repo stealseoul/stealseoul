@@ -8,6 +8,7 @@ interface ProductWithContentRow {
   emoji: string;
   price_range: string;
   search_keyword: string;
+  asin: string | null;
   locale: string;
   name: string;
   brand: string;
@@ -23,7 +24,7 @@ export async function getAdminProducts(locale: Locale): Promise<Product[]> {
 
   try {
     const rows = (await sql`
-      select p.slug, p.category, p.emoji, p.price_range, p.search_keyword,
+      select p.slug, p.category, p.emoji, p.price_range, p.search_keyword, p.asin,
              c.locale, c.name, c.brand, c.summary, c.description, c.highlights
       from admin_products p
       join admin_product_content c on c.product_id = p.id
@@ -46,6 +47,7 @@ export async function getAdminProducts(locale: Locale): Promise<Product[]> {
         emoji: row.emoji,
         priceRange: row.price_range,
         searchKeyword: row.search_keyword,
+        asin: row.asin ?? undefined,
         name: row.name,
         brand: row.brand,
         summary: row.summary,

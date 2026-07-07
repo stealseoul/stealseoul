@@ -77,7 +77,7 @@ export default async function ProductPage({
           <p className="text-neutral-600">{product.summary}</p>
           <p className="text-lg font-semibold text-neutral-800">{product.priceRange}</p>
           <div>
-            <AmazonButton keyword={product.searchKeyword} />
+            <AmazonButton keyword={product.searchKeyword} asin={product.asin} />
           </div>
           <p className="text-xs text-neutral-400">{tProduct("affiliateNote")}</p>
         </div>
