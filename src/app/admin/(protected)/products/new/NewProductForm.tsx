@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetchAmazonPreview, createProduct, generateProductImage } from "./actions";
+import { fetchAmazonPreview, createProduct, generateProductImage, extractFromPageText } from "./actions";
 import { slugify } from "@/lib/slugify";
 import { Category, CategorySlug } from "@/lib/types";
 
@@ -13,6 +13,10 @@ export default function NewProductForm({ categories }: { categories: Category[] 
   const [fetching, setFetching] = useState(false);
   const [fetchNote, setFetchNote] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
+
+  const [pageText, setPageText] = useState("");
+  const [extracting, setExtracting] = useState(false);
+  const [extractNote, setExtractNote] = useState<string | null>(null);
 
   const [asin, setAsin] = useState("");
   const [amazonUrl, setAmazonUrl] = useState("");
@@ -72,6 +76,46 @@ export default function NewProductForm({ categories }: { categories: Category[] 
       setFetchNote("Couldn't auto-fetch details (Amazon likely blocked the request) — enter everything manually below.");
     }
 
+    setRevealed(true);
+  }
+
+  async function handleExtractFromText() {
+    if (!pageText.trim()) return;
+    setExtracting(true);
+    setExtractNote(null);
+
+    const result = await extractFromPageText(pageText);
+    setExtracting(false);
+
+    let found = 0;
+    if (result.asin) {
+      setAsin(result.asin);
+      setAmazonUrl((prev) => prev || `https://www.amazon.com/dp/${result.asin}`);
+      found++;
+    }
+    if (result.title) {
+      handleNameChange(result.title);
+      setSearchKeyword((prev) => prev || result.title || "");
+      found++;
+    }
+    if (result.brand) {
+      setBrand(result.brand);
+      found++;
+    }
+    if (result.priceText) {
+      setPriceRange(result.priceText);
+      found++;
+    }
+    if (result.highlights.length > 0) {
+      setHighlightsText(result.highlights.join("\n"));
+      found++;
+    }
+
+    setExtractNote(
+      found > 0
+        ? `Extracted ${found} field(s) from the pasted text — review everything below before saving.`
+        : "Couldn't find recognizable product info in that text — try pasting more of the page, or fill in fields manually.",
+    );
     setRevealed(true);
   }
 
@@ -139,6 +183,32 @@ export default function NewProductForm({ categories }: { categories: Category[] 
           </button>
         </div>
         {fetchNote && <p className="mt-2 text-sm text-neutral-500">{fetchNote}</p>}
+      </div>
+
+      <div className="rounded-2xl border border-neutral-200 bg-white p-6">
+        <label className="text-sm font-medium text-neutral-700">
+          Or: paste the full product page text
+        </label>
+        <p className="mt-1 text-xs text-neutral-500">
+          Open the product on Amazon like normal, select all (Ctrl/Cmd+A), copy, and paste the whole
+          page below. Nothing is fetched from Amazon here — this only reads text you already copied
+          yourself.
+        </p>
+        <textarea
+          value={pageText}
+          onChange={(e) => setPageText(e.target.value)}
+          rows={4}
+          placeholder="Paste the copied page text here…"
+          className="mt-2 w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+        />
+        <button
+          onClick={handleExtractFromText}
+          disabled={extracting || !pageText.trim()}
+          className="mt-2 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+        >
+          {extracting ? "Extracting…" : "Extract from pasted text"}
+        </button>
+        {extractNote && <p className="mt-2 text-sm text-neutral-500">{extractNote}</p>}
       </div>
 
       {revealed && (

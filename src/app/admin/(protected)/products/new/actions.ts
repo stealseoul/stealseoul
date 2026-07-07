@@ -7,6 +7,7 @@ import { getAllProductSlugs } from "@/lib/data";
 import { revalidateProductPaths } from "@/lib/revalidate-product";
 import { scrapeAmazonProductPage } from "@/lib/amazon-scrape";
 import { generateLifestyleImage, GenerateLifestyleImageResult } from "@/lib/lifestyle-image";
+import { parseAmazonPageText, ParsedProductInfo } from "@/lib/parse-page-text";
 import { CategorySlug } from "@/lib/types";
 
 export interface AmazonPreviewResult {
@@ -65,6 +66,13 @@ export async function fetchAmazonPreview(rawInput: string): Promise<AmazonPrevie
     priceText: scraped?.priceText,
     keywords: extractKeywords(rawInput),
   };
+}
+
+// Pure text parsing — no network request to Amazon happens here. The admin
+// pastes text they copied themselves while browsing normally, so this
+// carries none of the bot-detection/ToS concerns scraping does.
+export async function extractFromPageText(rawText: string): Promise<ParsedProductInfo> {
+  return parseAmazonPageText(rawText);
 }
 
 export interface CreateProductInput {
