@@ -14,11 +14,16 @@ export default async function ProductCard({ product }: { product: Product }) {
       href={`/products/${product.slug}`}
       className="group flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-white transition hover:-translate-y-0.5 hover:shadow-lg"
     >
-      <div
-        className={`flex h-36 items-center justify-center bg-gradient-to-br text-6xl ${category?.gradient ?? "from-neutral-200 to-neutral-100"}`}
-      >
-        {product.emoji}
-      </div>
+      {product.imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={product.imageUrl} alt="" className="h-36 w-full object-cover" />
+      ) : (
+        <div
+          className={`flex h-36 items-center justify-center bg-gradient-to-br text-6xl ${category?.gradient ?? "from-neutral-200 to-neutral-100"}`}
+        >
+          {product.emoji}
+        </div>
+      )}
       <div className="flex flex-1 flex-col gap-2 p-4">
         <span className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
           {category?.shortName}

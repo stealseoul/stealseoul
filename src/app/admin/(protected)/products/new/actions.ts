@@ -6,6 +6,7 @@ import { sql, DB_CONFIGURED } from "@/lib/db";
 import { getAllProductSlugs } from "@/lib/data";
 import { revalidateProductPaths } from "@/lib/revalidate-product";
 import { scrapeAmazonProductPage } from "@/lib/amazon-scrape";
+import { generateLifestyleImage, GenerateLifestyleImageResult } from "@/lib/lifestyle-image";
 import { CategorySlug } from "@/lib/types";
 
 export interface AmazonPreviewResult {
@@ -14,7 +15,6 @@ export interface AmazonPreviewResult {
   sourceUrl: string;
   title?: string;
   description?: string;
-  imageUrl?: string;
   priceText?: string;
   keywords?: string;
 }
@@ -62,7 +62,6 @@ export async function fetchAmazonPreview(rawInput: string): Promise<AmazonPrevie
     sourceUrl,
     title: scraped?.title,
     description: scraped?.description,
-    imageUrl: scraped?.imageUrl,
     priceText: scraped?.priceText,
     keywords: extractKeywords(rawInput),
   };
@@ -76,6 +75,7 @@ export interface CreateProductInput {
   searchKeyword: string;
   asin?: string;
   amazonUrl?: string;
+  imageUrl?: string;
   verifiedDiscountNote?: string;
   name: string;
   brand: string;
@@ -118,10 +118,10 @@ export async function createProduct(input: CreateProductInput): Promise<SaveResu
 
   try {
     const inserted = (await sql`
-      insert into admin_products (slug, category, emoji, price_range, search_keyword, asin, amazon_url, verified_discount_note)
+      insert into admin_products (slug, category, emoji, price_range, search_keyword, asin, amazon_url, image_url, verified_discount_note)
       values (
         ${input.slug}, ${input.category}, ${input.emoji || "📦"}, ${input.priceRange},
-        ${input.searchKeyword}, ${input.asin || null}, ${input.amazonUrl || null}, ${input.verifiedDiscountNote || null}
+        ${input.searchKeyword}, ${input.asin || null}, ${input.amazonUrl || null}, ${input.imageUrl || null}, ${input.verifiedDiscountNote || null}
       )
       returning id
     `) as unknown as { id: string }[];
@@ -141,4 +141,19 @@ export async function createProduct(input: CreateProductInput): Promise<SaveResu
 
   revalidateProductPaths(input.slug, input.category);
   return { ok: true };
+}
+
+// Generates a brand-new AI lifestyle image (never a real Amazon photo — see
+// src/lib/lifestyle-image.ts). Gated behind the same admin check as writes
+// since each call costs real money against the Gemini API.
+export async function generateProductImage(
+  slug: string,
+  name: string,
+  summary: string,
+): Promise<GenerateLifestyleImageResult> {
+  const email = await getAuthorizedAdminEmail();
+  if (!email) {
+    return { ok: false, error: "Not authorized." };
+  }
+  return generateLifestyleImage(slug, name, summary);
 }

@@ -21,6 +21,7 @@ export interface ProductBase {
   priceRange: string;
   searchKeyword: string;
   asin?: string;
+  imageUrl?: string;
 }
 
 export interface ProductContent {

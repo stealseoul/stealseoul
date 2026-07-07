@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetchAmazonPreview, createProduct } from "./actions";
+import { fetchAmazonPreview, createProduct, generateProductImage } from "./actions";
 import { slugify } from "@/lib/slugify";
 import { Category, CategorySlug } from "@/lib/types";
 
@@ -28,9 +28,24 @@ export default function NewProductForm({ categories }: { categories: Category[] 
   const [category, setCategory] = useState<CategorySlug>(categories[0]?.slug ?? "korean-food");
   const [emoji, setEmoji] = useState("📦");
   const [verifiedDiscountNote, setVerifiedDiscountNote] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [generatingImage, setGeneratingImage] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  async function handleGenerateImage() {
+    setGeneratingImage(true);
+    setImageError(null);
+    const result = await generateProductImage(slug, name, summary);
+    setGeneratingImage(false);
+    if (!result.ok || !result.url) {
+      setImageError(result.error ?? "Image generation failed.");
+      return;
+    }
+    setImageUrl(result.url);
+  }
 
   async function handleFetchPreview() {
     if (!rawInput.trim()) return;
@@ -84,6 +99,7 @@ export default function NewProductForm({ categories }: { categories: Category[] 
       searchKeyword: searchKeyword || name,
       asin: asin || undefined,
       amazonUrl: amazonUrl || undefined,
+      imageUrl: imageUrl || undefined,
       verifiedDiscountNote: verifiedDiscountNote || undefined,
       name,
       brand,
@@ -170,6 +186,31 @@ export default function NewProductForm({ categories }: { categories: Category[] 
               onChange={(e) => setEmoji(e.target.value)}
               className="w-24 rounded-lg border border-neutral-300 px-3 py-2 text-center text-lg"
             />
+          </Field>
+
+          <Field label="Lifestyle image (AI-generated — never a real Amazon photo)">
+            <div className="flex items-start gap-4">
+              {imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={imageUrl} alt="" className="h-24 w-24 rounded-lg object-cover" />
+              ) : (
+                <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-neutral-100 text-3xl">
+                  {emoji}
+                </div>
+              )}
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={handleGenerateImage}
+                  disabled={generatingImage || !name || !summary}
+                  className="rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium hover:bg-neutral-50 disabled:opacity-50"
+                >
+                  {generatingImage ? "Generating…" : imageUrl ? "Regenerate image" : "Generate lifestyle image"}
+                </button>
+                <p className="text-xs text-neutral-400">Needs a name and summary filled in first.</p>
+                {imageError && <p className="text-xs text-red-600">{imageError}</p>}
+              </div>
+            </div>
           </Field>
 
           <Field label="Brand">

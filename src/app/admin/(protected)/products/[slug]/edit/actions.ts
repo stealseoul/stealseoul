@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth/server";
 import { isAllowedAdmin } from "@/lib/admin-allowlist";
 import { sql, DB_CONFIGURED } from "@/lib/db";
 import { revalidateProductPaths } from "@/lib/revalidate-product";
+import { generateLifestyleImage, GenerateLifestyleImageResult } from "@/lib/lifestyle-image";
 import { CategorySlug } from "@/lib/types";
 
 export interface UpdateProductInput {
@@ -14,6 +15,7 @@ export interface UpdateProductInput {
   searchKeyword: string;
   asin?: string;
   amazonUrl?: string;
+  imageUrl?: string;
   verifiedDiscountNote?: string;
   name: string;
   brand: string;
@@ -55,10 +57,10 @@ export async function updateProduct(input: UpdateProductInput): Promise<SaveResu
 
   try {
     const upserted = (await sql`
-      insert into admin_products (slug, category, emoji, price_range, search_keyword, asin, amazon_url, verified_discount_note, updated_at)
+      insert into admin_products (slug, category, emoji, price_range, search_keyword, asin, amazon_url, image_url, verified_discount_note, updated_at)
       values (
         ${input.slug}, ${input.category}, ${input.emoji || "📦"}, ${input.priceRange},
-        ${input.searchKeyword}, ${input.asin || null}, ${input.amazonUrl || null}, ${input.verifiedDiscountNote || null}, now()
+        ${input.searchKeyword}, ${input.asin || null}, ${input.amazonUrl || null}, ${input.imageUrl || null}, ${input.verifiedDiscountNote || null}, now()
       )
       on conflict (slug) do update set
         category = excluded.category,
@@ -67,6 +69,7 @@ export async function updateProduct(input: UpdateProductInput): Promise<SaveResu
         search_keyword = excluded.search_keyword,
         asin = excluded.asin,
         amazon_url = excluded.amazon_url,
+        image_url = excluded.image_url,
         verified_discount_note = excluded.verified_discount_note,
         updated_at = now()
       returning id
@@ -94,4 +97,19 @@ export async function updateProduct(input: UpdateProductInput): Promise<SaveResu
 
   revalidateProductPaths(input.slug, input.category);
   return { ok: true };
+}
+
+// Generates a brand-new AI lifestyle image (never a real Amazon photo — see
+// src/lib/lifestyle-image.ts). Gated behind the same admin check as writes
+// since each call costs real money against the Gemini API.
+export async function generateProductImage(
+  slug: string,
+  name: string,
+  summary: string,
+): Promise<GenerateLifestyleImageResult> {
+  const email = await getAuthorizedAdminEmail();
+  if (!email) {
+    return { ok: false, error: "Not authorized." };
+  }
+  return generateLifestyleImage(slug, name, summary);
 }

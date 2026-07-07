@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateProduct } from "./actions";
+import { updateProduct, generateProductImage } from "./actions";
 import { Category, CategorySlug, Product } from "@/lib/types";
 
 export default function EditProductForm({
@@ -25,10 +25,25 @@ export default function EditProductForm({
   const [emoji, setEmoji] = useState(product.emoji);
   const [asin, setAsin] = useState(product.asin ?? "");
   const [verifiedDiscountNote, setVerifiedDiscountNote] = useState("");
+  const [imageUrl, setImageUrl] = useState(product.imageUrl ?? "");
+  const [generatingImage, setGeneratingImage] = useState(false);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+
+  async function handleGenerateImage() {
+    setGeneratingImage(true);
+    setImageError(null);
+    const result = await generateProductImage(product.slug, name, summary);
+    setGeneratingImage(false);
+    if (!result.ok || !result.url) {
+      setImageError(result.error ?? "Image generation failed.");
+      return;
+    }
+    setImageUrl(result.url);
+  }
 
   async function handleSave() {
     setSaving(true);
@@ -47,6 +62,7 @@ export default function EditProductForm({
       priceRange,
       searchKeyword,
       asin: asin || undefined,
+      imageUrl: imageUrl || undefined,
       verifiedDiscountNote: verifiedDiscountNote || undefined,
       name,
       brand,
@@ -96,6 +112,30 @@ export default function EditProductForm({
           onChange={(e) => setEmoji(e.target.value)}
           className="w-24 rounded-lg border border-neutral-300 px-3 py-2 text-center text-lg"
         />
+      </Field>
+
+      <Field label="Lifestyle image (AI-generated — never a real Amazon photo)">
+        <div className="flex items-start gap-4">
+          {imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={imageUrl} alt="" className="h-24 w-24 rounded-lg object-cover" />
+          ) : (
+            <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-neutral-100 text-3xl">
+              {emoji}
+            </div>
+          )}
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={handleGenerateImage}
+              disabled={generatingImage || !name || !summary}
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-sm font-medium hover:bg-neutral-50 disabled:opacity-50"
+            >
+              {generatingImage ? "Generating…" : imageUrl ? "Regenerate image" : "Generate lifestyle image"}
+            </button>
+            {imageError && <p className="text-xs text-red-600">{imageError}</p>}
+          </div>
+        </div>
       </Field>
 
       <Field label="Brand">

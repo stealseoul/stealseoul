@@ -64,11 +64,16 @@ export default async function ProductPage({
       </nav>
 
       <div className="mt-6 grid grid-cols-1 gap-8 sm:grid-cols-2">
-        <div
-          className={`flex h-64 items-center justify-center rounded-3xl bg-gradient-to-br text-8xl ${category?.gradient ?? "from-neutral-200 to-neutral-100"}`}
-        >
-          {product.emoji}
-        </div>
+        {product.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={product.imageUrl} alt="" className="h-64 w-full rounded-3xl object-cover" />
+        ) : (
+          <div
+            className={`flex h-64 items-center justify-center rounded-3xl bg-gradient-to-br text-8xl ${category?.gradient ?? "from-neutral-200 to-neutral-100"}`}
+          >
+            {product.emoji}
+          </div>
+        )}
         <div className="flex flex-col justify-center gap-4">
           <span className="text-xs font-semibold uppercase tracking-wide text-neutral-400">
             {category?.shortName} · {product.brand}
