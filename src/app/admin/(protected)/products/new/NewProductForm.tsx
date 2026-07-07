@@ -22,12 +22,27 @@ const MAX_INFO_IMAGES = 8;
 // Downscales + re-encodes as JPEG before upload — phone screenshots/photos
 // are often several MB at 3000px+, which makes both the upload and the
 // model's own read of the image much slower than it needs to be for
-// reading printed text off an infographic.
-function compressImage(file: File, maxDimension = 1400, quality = 0.82): Promise<{ data: string; mimeType: string }> {
+// reading printed text off an infographic. Compresses harder for larger
+// source files, and always resolves/rejects within a fixed time — a huge
+// or unusual-format image can otherwise leave the browser's decoder
+// hanging with neither onload nor onerror ever firing, which would stall
+// the whole batch indefinitely with no way to recover.
+function compressImage(file: File): Promise<{ data: string; mimeType: string }> {
+  const isHuge = file.size > 8 * 1024 * 1024;
+  const maxDimension = isHuge ? 1000 : 1400;
+  const quality = isHuge ? 0.7 : 0.82;
+
   return new Promise((resolve, reject) => {
-    const img = new Image();
     const url = URL.createObjectURL(file);
+    const img = new Image();
+
+    const timeoutId = setTimeout(() => {
+      URL.revokeObjectURL(url);
+      reject(new Error(`"${file.name}" took too long to process — try a smaller image.`));
+    }, 15000);
+
     img.onload = () => {
+      clearTimeout(timeoutId);
       URL.revokeObjectURL(url);
       let { width, height } = img;
       if (width > maxDimension || height > maxDimension) {
@@ -47,7 +62,11 @@ function compressImage(file: File, maxDimension = 1400, quality = 0.82): Promise
       const dataUrl = canvas.toDataURL("image/jpeg", quality);
       resolve({ data: dataUrl.split(",")[1] ?? "", mimeType: "image/jpeg" });
     };
-    img.onerror = () => reject(new Error("Couldn't read that image file."));
+    img.onerror = () => {
+      clearTimeout(timeoutId);
+      URL.revokeObjectURL(url);
+      reject(new Error(`Couldn't read "${file.name}" — it might be corrupted or an unsupported format.`));
+    };
     img.src = url;
   });
 }
