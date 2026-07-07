@@ -91,39 +91,45 @@ function ImageExtractSection({
     setExtracting(true);
     setNote(null);
 
-    let compressed: { data: string; mimeType: string }[];
+    // Everything below is wrapped in one try/finally: if the server action
+    // itself rejects (a platform-level 500/timeout, not just a slow
+    // response), that rejection has to be caught here or it skips
+    // setExtracting(false) entirely — which is exactly what was leaving
+    // this stuck on "Reading images..." forever regardless of any of the
+    // timeouts below, since those only guard against a *pending* promise,
+    // not a *rejected* one.
     try {
-      compressed = await Promise.all(batch.map((file) => compressImage(file)));
+      const compressed = await Promise.all(batch.map((file) => compressImage(file)));
+
+      const timeout = new Promise<ExtractInfoFromImagesResult>((resolve) =>
+        setTimeout(
+          () => resolve({ ok: false, error: "Timed out — try again with fewer images (2-3 at a time works best)." }),
+          55000,
+        ),
+      );
+
+      const result = await Promise.race([extractFromImages(compressed), timeout]);
+
+      if (!result.ok || !result.text) {
+        setNote(result.error ?? "Couldn't read any product info from those images.");
+        return;
+      }
+
+      onExtracted(result.text);
+      setNote(
+        overflow > 0
+          ? `Used the first ${MAX_INFO_IMAGES} images (${overflow} left over — run again for those). Text appended to Highlights below.`
+          : "Extracted text appended to Highlights below — review and trim before saving.",
+      );
     } catch (e) {
+      setNote(
+        e instanceof Error
+          ? `Something went wrong: ${e.message}`
+          : "Something went wrong reading those images — try again with fewer or smaller images.",
+      );
+    } finally {
       setExtracting(false);
-      setNote(e instanceof Error ? e.message : "Couldn't process those images.");
-      return;
     }
-
-    // Server actions can go silent instead of erroring cleanly if the
-    // underlying function is killed by a platform execution limit, which
-    // would otherwise leave this stuck on "Reading images..." forever.
-    const timeout = new Promise<ExtractInfoFromImagesResult>((resolve) =>
-      setTimeout(
-        () => resolve({ ok: false, error: "Timed out — try again with fewer images (2-3 at a time works best)." }),
-        55000,
-      ),
-    );
-
-    const result = await Promise.race([extractFromImages(compressed), timeout]);
-    setExtracting(false);
-
-    if (!result.ok || !result.text) {
-      setNote(result.error ?? "Couldn't read any product info from those images.");
-      return;
-    }
-
-    onExtracted(result.text);
-    setNote(
-      overflow > 0
-        ? `Used the first ${MAX_INFO_IMAGES} images (${overflow} left over — run again for those). Text appended to Highlights below.`
-        : "Extracted text appended to Highlights below — review and trim before saving.",
-    );
   }
 
   return (
