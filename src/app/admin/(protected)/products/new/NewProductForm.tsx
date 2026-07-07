@@ -12,6 +12,12 @@ import {
 import { slugify } from "@/lib/slugify";
 import { pickEmoji } from "@/lib/pick-emoji";
 import { Category, CategorySlug } from "@/lib/types";
+import type { ExtractInfoFromImagesResult } from "@/lib/parse-image-info";
+
+// Sending a large batch of images to Gemini in one request gets slow (and
+// more likely to hit a platform execution limit) fast — a handful per click
+// keeps each extraction quick; admins can just run it again for the rest.
+const MAX_INFO_IMAGES = 6;
 
 export default function NewProductForm({ categories }: { categories: Category[] }) {
   const router = useRouter();
@@ -178,19 +184,31 @@ export default function NewProductForm({ categories }: { categories: Category[] 
 
   async function handleExtractFromImages() {
     if (infoImages.length === 0) return;
+    const overflow = infoImages.length - MAX_INFO_IMAGES;
+    const batch = infoImages.slice(0, MAX_INFO_IMAGES);
     setExtractingImages(true);
     setImageExtractNote(null);
 
     let images: { data: string; mimeType: string }[];
     try {
-      images = await Promise.all(infoImages.map((file) => compressImage(file)));
+      images = await Promise.all(batch.map((file) => compressImage(file)));
     } catch (e) {
       setExtractingImages(false);
       setImageExtractNote(e instanceof Error ? e.message : "Couldn't process those images.");
       return;
     }
 
-    const result = await extractFromImages(images);
+    // Server actions can go silent instead of erroring cleanly if the
+    // underlying function is killed by a platform execution limit, which
+    // would otherwise leave this stuck on "Reading images..." forever.
+    const timeout = new Promise<ExtractInfoFromImagesResult>((resolve) =>
+      setTimeout(
+        () => resolve({ ok: false, error: "Timed out — try again with fewer images (2-3 at a time works best)." }),
+        45000,
+      ),
+    );
+
+    const result = await Promise.race([extractFromImages(images), timeout]);
     setExtractingImages(false);
 
     if (!result.ok || !result.text) {
@@ -200,7 +218,11 @@ export default function NewProductForm({ categories }: { categories: Category[] 
 
     setHighlightsText((prev) => (prev ? `${prev}\n${result.text}` : (result.text ?? "")));
     setEmoji(pickEmoji(`${name} ${highlightsText} ${result.text}`, category));
-    setImageExtractNote("Extracted text appended to Highlights below — review and trim before saving.");
+    setImageExtractNote(
+      overflow > 0
+        ? `Used the first ${MAX_INFO_IMAGES} images (${overflow} left over — run again for those). Text appended to Highlights below — review and trim before saving.`
+        : "Extracted text appended to Highlights below — review and trim before saving.",
+    );
     setRevealed(true);
   }
 
@@ -316,7 +338,11 @@ export default function NewProductForm({ categories }: { categories: Category[] 
             />
           </label>
           <span className="text-sm text-neutral-500">
-            {infoImages.length > 0 ? `${infoImages.length} image(s) selected` : "No images selected"}
+            {infoImages.length > 0
+              ? `${infoImages.length} image(s) selected${
+                  infoImages.length > MAX_INFO_IMAGES ? ` — only the first ${MAX_INFO_IMAGES} will be used` : ""
+                }`
+              : "No images selected"}
           </span>
         </div>
         <button
